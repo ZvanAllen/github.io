@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zack van Allen — Applied AI & Health Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #111118;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --accent: #00e5a0;
+    --accent-dim: rgba(0, 229, 160, 0.12);
+    --accent-glow: rgba(0, 229, 160, 0.25);
+    --text-primary: #e8e8ed;
+    --text-secondary: #8b8b9e;
+    --text-muted: #5a5a6e;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-accent: rgba(0, 229, 160, 0.2);
+    --font-display: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    background: rgba(10, 10, 15, 0.8);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text-muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+    font-family: var(--font-mono);
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: var(--bg-primary) !important;
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    font-weight: 600 !important;
+    transition: opacity 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; color: var(--bg-primary) !important; }
+
+  /* ─── HAMBURGER ─── */
+  .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+  .nav-toggle span {
+    display: block; width: 22px; height: 2px; background: var(--text-secondary);
+    margin: 5px 0; transition: all 0.3s; border-radius: 2px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0.3;
+    pointer-events: none;
+    animation: pulseGlow 8s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(1.1); }
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.35s;
+  }
+  .hero h1 .accent { color: var(--accent); }
+
+  .hero-description {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 620px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.65s;
+  }
+
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    transition: all 0.25s;
+    background: rgba(255,255,255,0.02);
+  }
+  .hero-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+    transform: translateY(-1px);
+  }
+  .hero-link svg { width: 16px; height: 16px; }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.8s;
+  }
+
+  .stat-number {
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.25rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    margin-bottom: 3.5rem;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  /* ─── PROJECTS ─── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+
+  .project-card:hover {
+    border-color: var(--border-accent);
+    background: var(--bg-card-hover);
+    transform: translateY(-3px);
+  }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+  }
+
+  .badge-lead { background: var(--accent-dim); color: var(--accent); }
+  .badge-dev { background: rgba(99, 142, 255, 0.12); color: #638eff; }
+  .badge-design { background: rgba(255, 167, 38, 0.12); color: #ffa726; }
+
+  .project-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .project-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .project-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.25rem 0.55rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .project-metric {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .project-metric strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ─── EXPERIENCE TIMELINE ─── */
+  .timeline {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--border) 30%, var(--border));
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 2.5rem;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.5rem;
+    top: 0.55rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 2px solid var(--text-muted);
+    transition: border-color 0.3s;
+  }
+  .timeline-item:first-child::before { border-color: var(--accent); background: var(--accent-dim); }
+
+  .timeline-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+
+  .timeline-role {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.01em;
+  }
+
+  .timeline-org {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.6rem;
+  }
+
+  .timeline-detail {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ─── PUBLICATIONS ─── */
+  .pub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pub-item {
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.25s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .pub-item:hover {
+    border-color: var(--border-accent);
+    background: var(--bg-card-hover);
+  }
+
+  .pub-year {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+  }
+
+  .pub-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.45;
+    margin-bottom: 0.35rem;
+  }
+
+  .pub-journal {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .pub-expand {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .pub-expand a {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.6rem 1.5rem;
+    border: 1px solid var(--border-accent);
+    border-radius: 8px;
+    transition: all 0.25s;
+    display: inline-block;
+  }
+  .pub-expand a:hover {
+    background: var(--accent-dim);
+    transform: translateY(-1px);
+  }
+
+  /* ─── EDUCATION ─── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .edu-card {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .edu-degree {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .edu-school {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .edu-year {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .edu-note {
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+  }
+
+  /* ─── TOOLS ─── */
+  .tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tool-chip {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .tool-chip:hover {
+    border-color: var(--border-accent);
+    color: var(--accent);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ─── DIVIDER ─── */
+  .section-divider {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .section-divider hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { 
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 10, 15, 0.97);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      z-index: 99;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1.1rem; }
+    .nav-toggle { display: block; z-index: 101; }
+
+    .hero { padding: 7rem 1.25rem 3rem; min-height: auto; }
+    .hero h1 { font-size: 2.2rem; }
+    .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    section { padding: 4rem 1.25rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav>
+  <a href="#" class="nav-logo">zva<span>/</span>portfolio</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#projects" onclick="closeNav()">Projects</a></li>
+    <li><a href="#experience" onclick="closeNav()">Experience</a></li>
+    <li><a href="#publications" onclick="closeNav()">Publications</a></li>
+    <li><a href="#education" onclick="closeNav()">Education</a></li>
+    <li><a href="mailto:vanallen.22@gmail.com" class="nav-cta" onclick="closeNav()">Contact</a></li>
+  </ul>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Applied AI · Health Research · Strategy</div>
+    <h1>Zack van Allen<br><span class="accent">PhD, MBA</span></h1>
+    <p class="hero-description">
+      Applied AI leader translating complex healthcare problems into scalable, privacy-sensitive AI capabilities. I build adoption programs, governance frameworks, and working prototypes that improve clinical workflows and decision quality.
+    </p>
+    <div class="hero-links">
+      <a href="https://github.com/ZvanAllen" class="hero-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+      <a href="https://scholar.google.ca/citations?user=ukUBURoAAAAJ&hl=en" class="hero-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Google Scholar
+      </a>
+      <a href="https://www.linkedin.com/in/zack-van-allen-phd-mba-1a4377a2/" class="hero-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://bsky.app/profile/zackvanallen.bsky.social" class="hero-link" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+        Bluesky
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div>
+        <div class="stat-number">20+</div>
+        <div class="stat-label">Publications</div>
+      </div>
+      <div>
+        <div class="stat-number">4</div>
+        <div class="stat-label">AI Prototypes Shipped</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ PROJECTS ═══ -->
+<div class="section-divider"><hr></div>
+<section id="projects">
+  <div class="section-header reveal">
+    <div class="section-label">Featured Work</div>
+    <h2 class="section-title">Applied AI Programs &amp; Prototypes</h2>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <span class="project-badge badge-lead">Program Lead</span>
+      <h3 class="project-title">Organizational AI Adoption Roadmap & Governance</h3>
+      <p class="project-description">
+        Built a comprehensive AI adoption roadmap for a multi-portfolio university department. Established governance mechanisms including working policies, approved tool lists, data-use guidance, a reusable prompt library, and micro-grants for experimentation.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">AI Strategy</span>
+        <span class="project-tag">Governance</span>
+        <span class="project-tag">Change Mgmt</span>
+        <span class="project-tag">Implementation Science</span>
+      </div>
+      <div class="project-metric">Structured around <strong>5 pillars</strong>: People · AI Governance · Data Governance · Technology · Process</div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-badge badge-dev">ML / AI Lead</span>
+      <h3 class="project-title">AI-Driven Medical School Admissions Scoring</h3>
+      <p class="project-description">
+        Designed an AI-assisted scoring pipeline for ~2,200 autobiographical sketches per admissions cycle with bilingual support and equity/bias auditing baked into the evaluation framework.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">NLP</span>
+        <span class="project-tag">LLMs</span>
+        <span class="project-tag">Bias Auditing</span>
+        <span class="project-tag">Bilingual</span>
+      </div>
+      <div class="project-metric">Target: <strong>≥0.70 κ</strong>, <strong>≥0.80 AUC</strong> — projected <strong>~550 faculty hrs/yr</strong> reclaimed</div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-badge badge-design">Technical Design + Prototype</span>
+      <h3 class="project-title">AI-Powered Triage & Referral Intake Platform</h3>
+      <p class="project-description">
+        Developing a locally-hosted decision-support tool that mirrors clinical routing decisions and matches referrals to services. Fully on-premise architecture keeps sensitive data within the network.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">Local LLM</span>
+        <span class="project-tag">On-Prem</span>
+        <span class="project-tag">Workflow Automation</span>
+        <span class="project-tag">Privacy-First</span>
+      </div>
+      <div class="project-metric">Architecture: <strong>local LLM</strong> + workflow automation + datastore</div>
+    </div>
+
+    <div class="project-card reveal">
+      <span class="project-badge badge-dev">Co-Developer / Evaluator</span>
+      <h3 class="project-title">Automating Scholarly Feedback with AI</h3>
+      <p class="project-description">
+        Built a rubric-aligned feedback assistant using open-weight LLMs, then rigorously evaluated ~240 feedback reports in blinded comparisons against expert human evaluators to quantify quality and consistency.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">Open-Weight LLMs</span>
+        <span class="project-tag">Evaluation</span>
+        <span class="project-tag">Medical Education</span>
+      </div>
+      <div class="project-metric">Blinded evaluation: <strong>~240 reports</strong> compared against expert benchmarks</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE ═══ -->
+<div class="section-divider"><hr></div>
+<section id="experience">
+  <div class="section-header reveal">
+    <div class="section-label">Career</div>
+    <h2 class="section-title">Experience</h2>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2024 — Present</div>
+      <div class="timeline-role">Senior Research Associate</div>
+      <div class="timeline-org">uOttawa, Department of Family Medicine</div>
+      <div class="timeline-detail">Applied data science & AI strategy. Leading enterprise AI adoption, governance design, pilot evaluation, and translating clinical workflows into proof-of-concepts.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2023 — 2024</div>
+      <div class="timeline-role">Postdoctoral Research Fellow</div>
+      <div class="timeline-org">University of Ottawa · Mitacs-Banting</div>
+      <div class="timeline-detail">Predictive modeling on a national cohort (n≈40k) for functional dependence classification. Quasi-experimental analyses using propensity-score matching and multilevel modeling.</div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2018 — 2024</div>
+      <div class="timeline-role">Research Associate / Coordinator</div>
+      <div class="timeline-org">Ottawa Hospital Research Institute</div>
+      <div class="timeline-detail">Multi-site behavioral and clinical research. Unsupervised learning for behavioral profiling, systematic reviews, and cross-institutional project management.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PUBLICATIONS ═══ -->
+<div class="section-divider"><hr></div>
+<section id="publications">
+  <div class="section-header reveal">
+    <div class="section-label">Research Output</div>
+    <h2 class="section-title">Selected First-Author Publications</h2>
+  </div>
+
+  <div class="pub-list">
+    <a href="https://www.medrxiv.org/content/10.1101/2024.07.15.24310429v1" target="_blank" class="pub-item reveal">
+      <div class="pub-year">2026</div>
+      <div class="pub-title">Can AI Match Human Experts? Evaluating LLM-Generated Feedback on Resident Scholarly Projects</div>
+      <div class="pub-journal">medRxiv (preprint)</div>
+    </a>
+    <a href="https://doi.org/10.1101/2023.09.14.23295576" target="_blank" class="pub-item reveal">
+      <div class="pub-year">2025</div>
+      <div class="pub-title">Prospective Classification of Functional Dependence: Machine Learning and 39,927 CLSA Participants</div>
+      <div class="pub-journal">Physical Therapy</div>
+    </a>
+    <a href="https://doi.org/10.31234/osf.io/kmubv" target="_blank" class="pub-item reveal">
+      <div class="pub-year">2024</div>
+      <div class="pub-title">Pre-stroke Physical Activity Matters for Functional Limitations: A Longitudinal Control Study of 12,860 Participants</div>
+      <div class="pub-journal">Physical Therapy Journal</div>
+    </a>
+    <a href="https://doi.org/10.31234/osf.io/kmubv" target="_blank" class="pub-item reveal">
+      <div class="pub-year">2024</div>
+      <div class="pub-title">Multiple-Behaviour Temporal Network Analysis During COVID-19</div>
+      <div class="pub-journal">British Journal of Health Psychology</div>
+    </a>
+    <a href="https://doi.org/10.1093/abm/kaad008" target="_blank" class="pub-item reveal">
+      <div class="pub-year">2023</div>
+      <div class="pub-title">Clustering of Health Behaviours in Canadians: A Multiple Behaviour Analysis of CLSA Data</div>
+      <div class="pub-journal">Annals of Behavioral Medicine</div>
+    </a>
+  </div>
+  <div class="pub-expand reveal">
+    <a href="https://scholar.google.ca/citations?user=ukUBURoAAAAJ&hl=en" target="_blank">View all 20+ publications →</a>
+  </div>
+</section>
+
+<!-- ═══ EDUCATION ═══ -->
+<div class="section-divider"><hr></div>
+<section id="education">
+  <div class="section-header reveal">
+    <div class="section-label">Education</div>
+    <h2 class="section-title">Academic Background</h2>
+  </div>
+
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div class="edu-degree">Postdoctoral Fellowship</div>
+      <div class="edu-school">University of Ottawa</div>
+      <div class="edu-year">2023 — 2024</div>
+      <div class="edu-note">Mitacs-Banting Fellow</div>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-degree">PhD, Psychology</div>
+      <div class="edu-school">University of Ottawa</div>
+      <div class="edu-year">2019 — 2023</div>
+      <div class="edu-note">CIHR Doctoral Scholarship</div>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-degree">MBA</div>
+      <div class="edu-school">Carleton University</div>
+      <div class="edu-year">2017 — 2019</div>
+    </div>
+    <div class="edu-card reveal">
+      <div class="edu-degree">BA, Psychology</div>
+      <div class="edu-school">Carleton University</div>
+      <div class="edu-year">2009 — 2014</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TOOLS ═══ -->
+<div class="section-divider"><hr></div>
+<section id="tools">
+  <div class="section-header reveal">
+    <div class="section-label">Toolkit</div>
+    <h2 class="section-title">Tools & Methods</h2>
+  </div>
+  <div class="tools-row reveal">
+    <span class="tool-chip">Python</span>
+    <span class="tool-chip">R</span>
+    <span class="tool-chip">SQL</span>
+    <span class="tool-chip">Git</span>
+    <span class="tool-chip">pandas</span>
+    <span class="tool-chip">scikit-learn</span>
+    <span class="tool-chip">statsmodels</span>
+    <span class="tool-chip">NumPy</span>
+    <span class="tool-chip">tidyverse</span>
+    <span class="tool-chip">NLP / LLMs</span>
+    <span class="tool-chip">RAG</span>
+    <span class="tool-chip">ML Evaluation</span>
+    <span class="tool-chip">Causal Inference</span>
+    <span class="tool-chip">Predictive Modeling</span>
+    <span class="tool-chip">Claude Code</span>
+    <span class="tool-chip">Codex</span>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="mailto:vanallen.22@gmail.com">vanallen.22@gmail.com</a>
+      <a href="https://github.com/ZvanAllen" target="_blank">GitHub</a>
+      <a href="https://scholar.google.ca/citations?user=ukUBURoAAAAJ&hl=en" target="_blank">Google Scholar</a>
+      <a href="https://www.linkedin.com/in/zack-van-allen-phd-mba-1a4377a2/" target="_blank">LinkedIn</a>
+      <a href="https://bsky.app/profile/zackvanallen.bsky.social" target="_blank">Bluesky</a>
+    </div>
+    <div class="footer-copy">© 2026 Zack van Allen. Ontario, Canada.</div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Mobile nav
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  function closeNav() {
+    document.getElementById('navLinks').classList.remove('open');
+  }
+</script>
+
+</body>
+</html>
